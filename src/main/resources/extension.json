@@ -1,0 +1,12 @@
+{
+  "entrypoint": "com.imjustdoom.justpermissions.JustPermissions",
+  "name": "JustPermissions",
+  "externalDependencies": {
+    "repositories": [
+      {"name": "Central", "url": "https://repo1.maven.org/maven2/"}
+    ],
+    "artifacts": [
+      "org.spongepowered:configurate-yaml:4.1.1"
+    ]
+  }
+}
