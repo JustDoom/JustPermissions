@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
 import static net.minestom.server.command.builder.arguments.ArgumentType.Word;
 
 public class PlayerSubcommand extends Command {
@@ -22,12 +23,11 @@ public class PlayerSubcommand extends Command {
         super("player");
 
         ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
-        ArgumentWord option = Word("option").from("permission", "info");
         ArgumentWord action = Word("action").from("add", "remove");
         ArgumentWord permission = Word("permission");
 
-        addSyntax(this::execute, players, Word("option").from("info"));
-        addSyntax(this::execute, players, Word("option").from("permission"), action, permission);
+        addSyntax(this::execute, players, Literal("option"));
+        addSyntax(this::execute, players, Literal("permission"), action, permission);
     }
 
     private void execute(@NotNull CommandSender sender, @NotNull CommandContext context) {
