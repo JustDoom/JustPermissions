@@ -1,5 +1,6 @@
 package com.imjustdoom.justpermissions.commands.subcommands;
 
+import com.imjustdoom.justpermissions.JustPermissions;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
@@ -11,6 +12,7 @@ import net.minestom.server.permission.Permission;
 import net.minestom.server.utils.entity.EntityFinder;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,24 +28,16 @@ public class PlayerSubcommand extends Command {
         ArgumentWord action = Word("action").from("add", "remove");
         ArgumentWord permission = Word("permission");
 
-        addSyntax(this::execute, players, Literal("option"));
-        addSyntax(this::execute, players, Literal("permission"), action, permission);
+        addSyntax(this::executeInfo, players, Literal("info"));
+        addSyntax(this::executePerm, players, Literal("permission"), action, permission);
     }
 
-    private void execute(@NotNull CommandSender sender, @NotNull CommandContext context) {
-        final String option = context.get("option");
+    private void executePerm(@NotNull CommandSender sender, @NotNull CommandContext context) {
         final String action = context.get("action");
         final EntityFinder target = context.get("player");
         final String permission = context.get("permission");
 
-        switch (option) {
-            case "permission":
-                executePerm(target, sender, permission, action);
-                break;
-            case "info":
-                executeInfo(target, sender);
-                break;
-        }
+        executePerm(target, sender, permission, action);
     }
 
     private void executePerm(EntityFinder target, CommandSender sender, String permission, String action) {
@@ -61,8 +55,14 @@ public class PlayerSubcommand extends Command {
                     return;
                 }
 
-                player.addPermission(new Permission(permission));
-                sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
+                try {
+                    JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', '" + permission + "'");
+                    player.addPermission(new Permission(permission));
+                    sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
+                } catch (SQLException throwables) {
+                    sender.sendMessage("Error while trying to add permission to " + player.getUsername());
+                    throwables.printStackTrace();
+                }
             }
             case "remove" -> {
                 if (!player.hasPermission(permission)) {
@@ -70,13 +70,20 @@ public class PlayerSubcommand extends Command {
                     return;
                 }
 
-                player.removePermission(permission);
-                sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
+                try {
+                    JustPermissions.getInstance().getSqLite().runSql("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "' AND permission = '" + permission + "'");
+                    player.removePermission(permission);
+                    sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
+                } catch (SQLException throwables) {
+                    sender.sendMessage("Error while trying to remove permission from " + player.getUsername());
+                    throwables.printStackTrace();
+                }
             }
         }
     }
 
-    private void executeInfo(EntityFinder target, CommandSender sender) {
+    private void executeInfo(@NotNull CommandSender sender, @NotNull CommandContext context) {
+        final EntityFinder target = context.get("player");
         Player player = target.findFirstPlayer(sender);
 
         List<String> perms = new ArrayList<>();

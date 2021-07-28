@@ -6,7 +6,8 @@
       {"name": "Central", "url": "https://repo1.maven.org/maven2/"}
     ],
     "artifacts": [
-      "org.spongepowered:configurate-yaml:4.1.1"
+      "org.spongepowered:configurate-yaml:4.1.1",
+      "mysql:mysql-connector-java:8.0.26"
     ]
   }
 }
