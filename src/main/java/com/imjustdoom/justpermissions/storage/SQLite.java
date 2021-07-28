@@ -1,5 +1,7 @@
 package com.imjustdoom.justpermissions.storage;
 
+import com.imjustdoom.justpermissions.JustPermissions;
+
 import java.sql.*;
 
 public class SQLite {
@@ -7,10 +9,16 @@ public class SQLite {
     public Statement stmt;
 
     public SQLite() {
+
+        String user = JustPermissions.getInstance().getRoot().node("mysql", "username").getString();
+        String pass = JustPermissions.getInstance().getRoot().node("mysql", "pass").getString();
+        String server = JustPermissions.getInstance().getRoot().node("mysql", "server").getString();
+        String port = JustPermissions.getInstance().getRoot().node("mysql", "port").getString();
+        String database = JustPermissions.getInstance().getRoot().node("mysql", "database").getString();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://51.161.132.128:3306/s39181_notouch", "u39181_E8eiPP474N", "@a5ydOzqQ.j+RbTdMl!p8kAx");
+                    "jdbc:mysql://" + server + ":" + port + "/" + database, user, pass);
             //here sonoo is database name, root is username and password
             stmt = con.createStatement();
 
