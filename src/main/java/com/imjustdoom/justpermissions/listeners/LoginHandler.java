@@ -9,6 +9,8 @@ import net.minestom.server.permission.Permission;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginHandler {
 
@@ -18,18 +20,41 @@ public class LoginHandler {
         eventHandler.addListener(AsyncPlayerPreLoginEvent.class, event -> {
             Player player = event.getPlayer();
 
+            List<String> groupPerms = new ArrayList<>();
+
             try {
                 if(JustPermissions.getInstance().getSqLite().doesContain("'" + player.getUuid() + "'", "uuid", "players")){
                     ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
                     while (rs.next()){
-                        System.out.println(rs.getString("permission"));
-                        player.addPermission(new Permission(rs.getString("permission")));
+                        String perm = rs.getString("permission");
+
+                        System.out.println(perm.replace("group.", ""));
+                        if(JustPermissions.getInstance().getGroups().contains(perm.replace("group.", ""))){
+                            groupPerms.add(perm);
+                        }
+
+                        player.addPermission(new Permission(perm));
                     }
+
+                    rs.close();
+
+                    for(String perm:groupPerms) {
+                        rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + perm.replace("group.", "") + "'");
+                        while (rs.next()) {
+                            System.out.println(rs.getString("permission"));
+                            player.addPermission(new Permission(rs.getString("permission")));
+                        }
+                    }
+
+                    rs.close();
+
                     return;
                 }
 
                 JustPermissions.getInstance().getSqLite().insertRecord("players", "'" + player.getUuid()
                         + "', '" + player.getUsername() + "', 'default'");
+
+                JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', 'group.default'");
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

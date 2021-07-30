@@ -1,6 +1,7 @@
 package com.imjustdoom.justpermissions.commands.subcommands;
 
 import com.imjustdoom.justpermissions.JustPermissions;
+import com.imjustdoom.justpermissions.PermissionHandler;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
@@ -12,12 +13,12 @@ import net.minestom.server.permission.Permission;
 import net.minestom.server.utils.entity.EntityFinder;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
-import static net.minestom.server.command.builder.arguments.ArgumentType.Word;
+import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
 public class PlayerSubcommand extends Command {
 
@@ -26,10 +27,58 @@ public class PlayerSubcommand extends Command {
 
         ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
         ArgumentWord action = Word("action").from("add", "remove");
+        ArgumentWord groupAction = Word("action").from("add", "remove", "set");
         ArgumentWord permission = Word("permission");
 
         addSyntax(this::executeInfo, players, Literal("info"));
+
         addSyntax(this::executePerm, players, Literal("permission"), action, permission);
+        addSyntax(this::executeClear, players, Literal("permission"), Literal("clear"));
+
+        addSyntax(this::executeGroup, players, Literal("group"), groupAction, Word("group"));
+    }
+
+    private void executeGroup(@NotNull CommandSender sender, @NotNull CommandContext context) {
+        final String action = context.get("action");
+        final EntityFinder target = context.get("player");
+        final String group = context.get("group");
+
+        Player player = target.findFirstPlayer(sender);
+
+        if (player == null) {
+            sender.sendMessage("The player " + target + " was unable to be found");
+            return;
+        }
+
+        try {
+            if(!JustPermissions.getInstance().getSqLite().doesContain("'" + group + "'", "name", "groups")){
+                sender.sendMessage("The group " + group + " doesn't exist");
+                return;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        switch (action) {
+            case "add" -> {
+                if (player.hasPermission("group." + group)) {
+                    sender.sendMessage(player.getUsername() + " already is in the group " + group);
+                    return;
+                }
+
+                PermissionHandler.addPermission(player, "group." + group);
+                sender.sendMessage(player.getUsername() + " now is in the group " + group);
+            }
+            case "remove" -> {
+                if (!player.hasPermission("group." + group)) {
+                    sender.sendMessage(player.getUsername() + " isn't in the group " + group);
+                    return;
+                }
+
+                PermissionHandler.removePermission(player, "group." + group);
+                sender.sendMessage(player.getUsername() + " no longer is in the group " + group);
+            }
+        }
     }
 
     private void executePerm(@NotNull CommandSender sender, @NotNull CommandContext context) {
@@ -37,10 +86,6 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         final String permission = context.get("permission");
 
-        executePerm(target, sender, permission, action);
-    }
-
-    private void executePerm(EntityFinder target, CommandSender sender, String permission, String action) {
         Player player = target.findFirstPlayer(sender);
 
         if (player == null) {
@@ -55,14 +100,8 @@ public class PlayerSubcommand extends Command {
                     return;
                 }
 
-                try {
-                    JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', '" + permission + "'");
-                    player.addPermission(new Permission(permission));
-                    sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
-                } catch (SQLException throwables) {
-                    sender.sendMessage("Error while trying to add permission to " + player.getUsername());
-                    throwables.printStackTrace();
-                }
+                PermissionHandler.addPermission(player, permission);
+                sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
             }
             case "remove" -> {
                 if (!player.hasPermission(permission)) {
@@ -70,15 +109,31 @@ public class PlayerSubcommand extends Command {
                     return;
                 }
 
-                try {
-                    JustPermissions.getInstance().getSqLite().runSql("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "' AND permission = '" + permission + "'");
-                    player.removePermission(permission);
-                    sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
-                } catch (SQLException throwables) {
-                    sender.sendMessage("Error while trying to remove permission from " + player.getUsername());
-                    throwables.printStackTrace();
-                }
+                PermissionHandler.removePermission(player, permission);
+                sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
             }
+        }
+    }
+
+    private void executeClear(@NotNull CommandSender sender, @NotNull CommandContext context){
+        final EntityFinder target = context.get("player");
+        Player player = target.findFirstPlayer(sender);
+
+        try {
+            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
+            while (rs.next()){
+                System.out.println(rs.getString("permission"));
+                player.removePermission(rs.getString("permission"));
+            }
+
+            rs.close();
+
+            JustPermissions.getInstance().getSqLite().stmt.executeUpdate("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
+
+            sender.sendMessage("Cleared all permissions from " + player.getUsername());
+        } catch (SQLException throwables) {
+            sender.sendMessage("Error while trying to remove all permissions from " + player.getUsername());
+            throwables.printStackTrace();
         }
     }
 

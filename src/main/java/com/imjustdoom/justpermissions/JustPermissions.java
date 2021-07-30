@@ -6,21 +6,24 @@ import com.imjustdoom.justpermissions.storage.SQLite;
 import com.imjustdoom.justpermissions.util.FileUtil;
 import lombok.Getter;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.extensions.Extension;
-import net.minestom.server.network.packet.client.play.ClientTabCompletePacket;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class JustPermissions extends Extension {
 
     private SQLite sqLite;
     public static JustPermissions instance;
-    public CommentedConfigurationNode root;
+    private CommentedConfigurationNode root;
+    private List<String> groups = new ArrayList<>();
 
     public JustPermissions(){
         instance = this;
@@ -67,6 +70,15 @@ public class JustPermissions extends Extension {
         sqLite = new SQLite();
 
         new LoginHandler();
+
+        try {
+            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM groups");
+            while (rs.next()){
+                groups.add(rs.getString("name"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override

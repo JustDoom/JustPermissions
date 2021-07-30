@@ -1,5 +1,7 @@
 package com.imjustdoom.justpermissions.commands.subcommands;
 
+import com.imjustdoom.justpermissions.JustPermissions;
+import com.imjustdoom.justpermissions.PermissionHandler;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
@@ -7,67 +9,73 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.entity.Player;
-import net.minestom.server.permission.Permission;
 import net.minestom.server.utils.entity.EntityFinder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import static net.minestom.server.command.builder.arguments.ArgumentType.Word;
+import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
 public class GroupSubcommand extends Command {
 
     public GroupSubcommand() {
         super("group");
 
-        ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
+        //ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
         ArgumentWord option = Word("option").from("permission");
         ArgumentWord action = Word("action").from("add", "remove", "info");
         ArgumentWord permission = Word("permission");
 
-        addSyntax(this::execute, players, option, action, permission);
+        addSyntax(this::executePerm, Word("group"), option, action, permission);
     }
 
-    private void execute(@NotNull CommandSender sender, @NotNull CommandContext context){
-        final String option = context.get("option");
+    private void executePerm(@NotNull CommandSender sender, @NotNull CommandContext context) {
         final String action = context.get("action");
-        final EntityFinder target = context.get("player");
         final String permission = context.get("permission");
-        Player player = target.findFirstPlayer(sender);
+        final String group = context.get("group");
 
-        if(player == null){
-            sender.sendMessage("The player " + target + " was unable to be found");
-            return;
+        try {
+            if (!JustPermissions.getInstance().getSqLite().doesContain("'" + group + "'", "name", "groups")) {
+                sender.sendMessage("The group " + group + " was unable to be found");
+                return;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
 
-        switch (action) {
-            case "add" -> {
-                if(player.hasPermission(permission)){
-                    sender.sendMessage(player.getUsername() + " already has the permission " + permission);
-                    return;
-                }
+        try {
 
-                player.addPermission(new Permission(permission));
-                sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
-            }
-            case "remove" -> {
-                if(!player.hasPermission(permission)){
-                    sender.sendMessage(player.getUsername() + " doesn't have the permission " + permission);
-                    return;
-                }
+            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.
+                    executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "' AND permission = '" + permission + "'");
 
-                player.removePermission(permission);
-                sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
-            }
-            case "info" -> {
-                List<String> perms = new ArrayList<>();
-                for(Permission perm:player.getAllPermissions()){
-                    perms.add(perm.getPermissionName());
-                }
+            switch (action) {
+                case "add" -> {
 
-                sender.sendMessage(player.getUsername() + " has the permissions " + perms);
+
+                        if (rs.next()) {
+                            sender.sendMessage(group + " already has the permission " + permission);
+                            return;
+                        }
+
+                        PermissionHandler.addPermission(group, permission);
+                        sender.sendMessage("Added the permission " + permission + " to " + group);
+
+                }
+                case "remove" -> {
+                    if (!rs.next()) {
+                        sender.sendMessage(group + " doesn't have the permission " + permission);
+                        return;
+                    }
+
+                    PermissionHandler.removePermission(group, permission);
+                    sender.sendMessage("Removed the permission " + permission + " from " + group);
+                }
             }
+
+            rs.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 }

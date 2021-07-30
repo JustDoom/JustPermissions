@@ -15,6 +15,7 @@ public class SQLite {
         String server = JustPermissions.getInstance().getRoot().node("mysql", "server").getString();
         String port = JustPermissions.getInstance().getRoot().node("mysql", "port").getString();
         String database = JustPermissions.getInstance().getRoot().node("mysql", "database").getString();
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection(
@@ -24,7 +25,7 @@ public class SQLite {
 
             createTables();
 
-            ResultSet rs = stmt.executeQuery("SELECT username FROM players");
+            //ResultSet rs = stmt.executeQuery("SELECT username FROM players");
 
             /*while(rs.next()){
                 System.out.print("ID: " + rs.getString("username"));
@@ -70,6 +71,25 @@ public class SQLite {
                 ") ENGINE=InnoDB;";
 
         stmt.executeUpdate(sql);
+
+        sql = "CREATE TABLE IF NOT EXISTS groups (" +
+                "`name` VARCHAR(36) NOT NULL," +
+                "PRIMARY KEY (`name`)" +
+                ") ENGINE=InnoDB;";
+
+        stmt.executeUpdate(sql);
+
+        sql = "CREATE TABLE IF NOT EXISTS group_permissions (" +
+                "`id` INT NOT NULL AUTO_INCREMENT," +
+                "`name` VARCHAR(36) NOT NULL," +
+                "`permission` VARCHAR(200) NOT NULL," +
+                "KEY `group_permissions_group` (`name`) USING BTREE," +
+                "PRIMARY KEY (`id`)" +
+                ") ENGINE=InnoDB;";
+
+        stmt.executeUpdate(sql);
+
+        //insertRecord("groups", "'default'");
     }
 }
 
