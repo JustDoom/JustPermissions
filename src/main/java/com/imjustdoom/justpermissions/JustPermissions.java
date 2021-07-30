@@ -83,6 +83,10 @@ public class JustPermissions extends Extension {
 
     @Override
     public void terminate() {
-
+        try {
+            getSqLite().stmt.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

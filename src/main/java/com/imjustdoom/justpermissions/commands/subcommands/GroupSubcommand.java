@@ -51,16 +51,13 @@ public class GroupSubcommand extends Command {
 
             switch (action) {
                 case "add" -> {
+                    if (rs.next()) {
+                        sender.sendMessage(group + " already has the permission " + permission);
+                        return;
+                    }
 
-
-                        if (rs.next()) {
-                            sender.sendMessage(group + " already has the permission " + permission);
-                            return;
-                        }
-
-                        PermissionHandler.addPermission(group, permission);
-                        sender.sendMessage("Added the permission " + permission + " to " + group);
-
+                    PermissionHandler.addPermission(group, permission);
+                    sender.sendMessage("Added the permission " + permission + " to " + group);
                 }
                 case "remove" -> {
                     if (!rs.next()) {
