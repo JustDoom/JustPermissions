@@ -5,6 +5,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent;
+import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.permission.Permission;
 
 import java.sql.ResultSet;
@@ -23,6 +24,13 @@ public class LoginHandler {
             List<String> groupPerms = new ArrayList<>();
 
             try {
+                if(!JustPermissions.getInstance().getSqLite().doesContain("'" + player.getUuid() + "'", "uuid", "players")) {
+                    JustPermissions.getInstance().getSqLite().insertRecord("players", "'" + player.getUuid()
+                            + "', '" + player.getUsername() + "', 'default'");
+
+                    JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', 'group.default'");
+                }
+
                 if(JustPermissions.getInstance().getSqLite().doesContain("'" + player.getUuid() + "'", "uuid", "players")){
                     ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
                     while (rs.next()){
@@ -30,6 +38,7 @@ public class LoginHandler {
 
                         System.out.println(perm.replace("group.", ""));
                         if(JustPermissions.getInstance().getGroups().contains(perm.replace("group.", ""))){
+                            JustPermissions.getInstance().getPlayers().put(player, perm.replace("group.", ""));
                             groupPerms.add(perm);
                         }
 
@@ -47,17 +56,16 @@ public class LoginHandler {
                     }
 
                     rs.close();
-
-                    return;
                 }
-
-                JustPermissions.getInstance().getSqLite().insertRecord("players", "'" + player.getUuid()
-                        + "', '" + player.getUsername() + "', 'default'");
-
-                JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', 'group.default'");
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+        });
+
+        eventHandler.addListener(PlayerDisconnectEvent.class, event -> {
+            Player player = event.getPlayer();
+
+            JustPermissions.getInstance().getPlayers().remove(player);
         });
     }
 }

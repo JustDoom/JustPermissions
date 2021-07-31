@@ -89,7 +89,7 @@ public class SQLite {
 
         stmt.executeUpdate(sql);
 
-        //insertRecord("groups", "'default'");
+        insertRecord("groups", "'default'");
     }
 }
 

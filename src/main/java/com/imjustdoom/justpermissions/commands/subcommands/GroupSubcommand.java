@@ -5,18 +5,17 @@ import com.imjustdoom.justpermissions.PermissionHandler;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
-import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
-import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.permission.Permission;
-import net.minestom.server.utils.entity.EntityFinder;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
@@ -61,6 +60,13 @@ public class GroupSubcommand extends Command {
                     }
 
                     PermissionHandler.addPermission(group, permission);
+
+                    for (Map.Entry<Player, String> pair : JustPermissions.getInstance().getPlayers().entrySet()) {
+                        if (pair.getValue().equalsIgnoreCase(group)) {
+                            pair.getKey().addPermission(new Permission(permission));
+                        }
+                    }
+
                     sender.sendMessage("Added the permission " + permission + " to " + group);
                 }
                 case "remove" -> {
@@ -70,6 +76,13 @@ public class GroupSubcommand extends Command {
                     }
 
                     PermissionHandler.removePermission(group, permission);
+
+                    for (Map.Entry<Player, String> pair : JustPermissions.getInstance().getPlayers().entrySet()) {
+                        if (pair.getValue().equalsIgnoreCase(group)) {
+                            pair.getKey().removePermission(permission);
+                        }
+                    }
+
                     sender.sendMessage("Removed the permission " + permission + " from " + group);
                 }
             }
@@ -89,7 +102,7 @@ public class GroupSubcommand extends Command {
             ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.
                     executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
 
-            while(rs.next()){
+            while (rs.next()) {
                 perms.add(rs.getString("permission"));
             }
 

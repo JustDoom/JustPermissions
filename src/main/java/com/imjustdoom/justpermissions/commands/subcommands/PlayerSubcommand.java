@@ -67,6 +67,18 @@ public class PlayerSubcommand extends Command {
                 }
 
                 PermissionHandler.addPermission(player, "group." + group);
+                JustPermissions.getInstance().getPlayers().put(player, group);
+
+                try {
+                    ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
+                    while (rs.next()) {
+                        System.out.println(rs.getString("permission"));
+                        player.addPermission(new Permission(rs.getString("permission")));
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+
                 sender.sendMessage(player.getUsername() + " now is in the group " + group);
             }
             case "remove" -> {
@@ -76,6 +88,18 @@ public class PlayerSubcommand extends Command {
                 }
 
                 PermissionHandler.removePermission(player, "group." + group);
+                JustPermissions.getInstance().getPlayers().remove(player, group);
+
+                try {
+                    ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
+                    while (rs.next()) {
+                        System.out.println(rs.getString("permission"));
+                        player.removePermission(new Permission(rs.getString("permission")));
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+
                 sender.sendMessage(player.getUsername() + " no longer is in the group " + group);
             }
         }

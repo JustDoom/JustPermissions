@@ -6,6 +6,7 @@ import com.imjustdoom.justpermissions.storage.SQLite;
 import com.imjustdoom.justpermissions.util.FileUtil;
 import lombok.Getter;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.Player;
 import net.minestom.server.extensions.Extension;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Getter
@@ -24,6 +26,7 @@ public class JustPermissions extends Extension {
     public static JustPermissions instance;
     private CommentedConfigurationNode root;
     private List<String> groups = new ArrayList<>();
+    private HashMap<Player, String> players = new HashMap<>();
 
     public JustPermissions(){
         instance = this;
@@ -83,10 +86,6 @@ public class JustPermissions extends Extension {
 
     @Override
     public void terminate() {
-        try {
-            getSqLite().stmt.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+
     }
 }
