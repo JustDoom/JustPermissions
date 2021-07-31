@@ -9,11 +9,14 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.permission.Permission;
 import net.minestom.server.utils.entity.EntityFinder;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minestom.server.command.builder.arguments.ArgumentType.*;
 
@@ -24,10 +27,11 @@ public class GroupSubcommand extends Command {
 
         //ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
         ArgumentWord option = Word("option").from("permission");
-        ArgumentWord action = Word("action").from("add", "remove", "info");
+        ArgumentWord action = Word("action").from("add", "remove");
         ArgumentWord permission = Word("permission");
 
         addSyntax(this::executePerm, Word("group"), option, action, permission);
+        addSyntax(this::executeInfo, Word("group"), Literal("info"));
     }
 
     private void executePerm(@NotNull CommandSender sender, @NotNull CommandContext context) {
@@ -71,6 +75,25 @@ public class GroupSubcommand extends Command {
             }
 
             rs.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private void executeInfo(@NotNull CommandSender sender, @NotNull CommandContext context) {
+        final String group = context.get("group");
+
+        List<String> perms = new ArrayList<>();
+
+        try {
+            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.
+                    executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
+
+            while(rs.next()){
+                perms.add(rs.getString("permission"));
+            }
+
+            sender.sendMessage(group + " has the permissions " + perms);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
