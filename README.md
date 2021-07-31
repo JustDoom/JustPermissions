@@ -10,5 +10,7 @@ Very WIP
 - [x] update player perms when changing group perms
 - [ ] customizable messages?
 - [ ] more storage options (h2, sqlite etc)
+- [ ] clean up the code
+- [ ] comment code
 
 Please report bugs in the issue tab
