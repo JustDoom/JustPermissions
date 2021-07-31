@@ -50,6 +50,9 @@ public class PlayerSubcommand extends Command {
             return;
         }
 
+        /**
+         * Checks if input group is valid
+         */
         try {
             if(!JustPermissions.getInstance().getSqLite().doesContain("'" + group + "'", "name", "groups")){
                 sender.sendMessage("The group " + group + " doesn't exist");
@@ -69,10 +72,12 @@ public class PlayerSubcommand extends Command {
                 PermissionHandler.addPermission(player, "group." + group);
                 JustPermissions.getInstance().getPlayers().put(player, group);
 
+                /**
+                 * Gets all permissions from group and adds them
+                 */
                 try {
                     ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
                     while (rs.next()) {
-                        System.out.println(rs.getString("permission"));
                         player.addPermission(new Permission(rs.getString("permission")));
                     }
                 } catch (SQLException throwables) {
@@ -90,10 +95,12 @@ public class PlayerSubcommand extends Command {
                 PermissionHandler.removePermission(player, "group." + group);
                 JustPermissions.getInstance().getPlayers().remove(player, group);
 
+                /**
+                 * Gets all permissions from group and removes them
+                 */
                 try {
                     ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
                     while (rs.next()) {
-                        System.out.println(rs.getString("permission"));
                         player.removePermission(new Permission(rs.getString("permission")));
                     }
                 } catch (SQLException throwables) {
@@ -143,6 +150,9 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         Player player = target.findFirstPlayer(sender);
 
+        /**
+         * Clears all permissions
+         */
         try {
             ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
             while (rs.next()){

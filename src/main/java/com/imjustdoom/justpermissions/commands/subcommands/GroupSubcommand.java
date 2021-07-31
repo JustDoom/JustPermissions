@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static net.minestom.server.command.builder.arguments.ArgumentType.*;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Literal;
+import static net.minestom.server.command.builder.arguments.ArgumentType.Word;
 
 public class GroupSubcommand extends Command {
 
@@ -30,6 +30,7 @@ public class GroupSubcommand extends Command {
         ArgumentWord permission = Word("permission");
 
         addSyntax(this::executePerm, Word("group"), option, action, permission);
+        addSyntax(this::executeClear, Word("group"), option, Literal("clear"));
         addSyntax(this::executeInfo, Word("group"), Literal("info"));
     }
 
@@ -93,11 +94,45 @@ public class GroupSubcommand extends Command {
         }
     }
 
+    private void executeClear(@NotNull CommandSender sender, @NotNull CommandContext context){
+        final String group = context.get("group");
+
+        /**
+         * Clears all permissions
+         */
+        try {
+            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" +group + "'");
+            while (rs.next()){
+                String permission = rs.getString("permission");
+
+                PermissionHandler.removePermission(group, permission);
+
+                for (Map.Entry<Player, String> pair : JustPermissions.getInstance().getPlayers().entrySet()) {
+                    if (pair.getValue().equalsIgnoreCase(group)) {
+                        pair.getKey().removePermission(permission);
+                    }
+                }
+            }
+
+            rs.close();
+
+            JustPermissions.getInstance().getSqLite().stmt.executeUpdate("DELETE FROM group_permissions WHERE name = '" + group + "'");
+
+            sender.sendMessage("Cleared all permissions from " +group);
+        } catch (SQLException throwables) {
+            sender.sendMessage("Error while trying to remove all permissions from " + group);
+            throwables.printStackTrace();
+        }
+    }
+
     private void executeInfo(@NotNull CommandSender sender, @NotNull CommandContext context) {
         final String group = context.get("group");
 
         List<String> perms = new ArrayList<>();
 
+        /**
+         * Get all permissions from the group
+         */
         try {
             ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.
                     executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");

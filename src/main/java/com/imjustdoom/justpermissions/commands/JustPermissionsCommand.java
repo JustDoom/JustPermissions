@@ -30,6 +30,11 @@ public class JustPermissionsCommand extends Command {
         //TODO: Sync command
     }
 
+    /**
+     * Creates a group and adds it to the db
+     * @param sender - command sender
+     * @param context - command context
+     */
     private void executeCreateGroup(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 
@@ -44,6 +49,11 @@ public class JustPermissionsCommand extends Command {
         }
     }
 
+    /**
+     * Removes a group
+     * @param sender - command sender
+     * @param context - command context
+     */
     private void executeRemoveGroup(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 

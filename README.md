@@ -11,6 +11,7 @@ Very WIP
 - [ ] customizable messages?
 - [ ] more storage options (h2, sqlite etc)
 - [ ] clean up the code
-- [ ] comment code
+- [x] comment code
+- [ ] allow importing of LuckPerm databases
 
 Please report bugs in the issue tab

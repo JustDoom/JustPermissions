@@ -39,6 +39,10 @@ public class JustPermissions extends Extension {
     @Override
     public void initialize() {
 
+        /**
+         * Checks if the config file exists
+         * if not creates one
+         */
         try {
             if(!FileUtil.doesFileExist("./extensions/JustPermissions"))
                 FileUtil.createDirectory("./extensions/JustPermissions");
@@ -52,6 +56,9 @@ public class JustPermissions extends Extension {
             e.printStackTrace();
         }
 
+        /**
+         * Loads config
+         */
         final YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
                 .path(Path.of("./extensions/JustPermissions/config.yml")) // Set where we will load and save to
                 .build();
@@ -74,6 +81,9 @@ public class JustPermissions extends Extension {
 
         new LoginHandler();
 
+        /**
+         * Adds groups to the group list
+         */
         try {
             ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM groups");
             while (rs.next()){
@@ -86,6 +96,6 @@ public class JustPermissions extends Extension {
 
     @Override
     public void terminate() {
-
+        //hi
     }
 }
