@@ -1,7 +1,7 @@
 # JustPermissions
 A permissions plugin for Minestom
 
-Very WIP
+Should be stable enough for a server
 
 ## Progress
 - [x] player specific permissions
