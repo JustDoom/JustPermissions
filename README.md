@@ -1,6 +1,9 @@
 # JustPermissions
 A permissions plugin for Minestom
 
+To run the commands give yourself the permission "justpermissions.perms"
+from the console with "jp player <username> permission add justpermissions.perms"
+
 Should be stable enough for a server
 
 ## Progress
