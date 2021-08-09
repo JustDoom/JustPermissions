@@ -9,7 +9,7 @@ Very WIP
 - [x] permission saving
 - [x] update player perms when changing group perms
 - [ ] customizable messages?
-- [ ] more storage options (h2, sqlite etc)
+- [x] more storage options (h2, sqlite etc)
 - [ ] clean up the code
 - [x] comment code
 - [ ] allow importing of LuckPerm databases
