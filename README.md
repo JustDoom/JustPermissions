@@ -15,3 +15,30 @@ Should be stable enough for a server
 - [ ] allow importing of LuckPerm databases
 
 Please report bugs in the issue tab
+
+## Adding you permissions to the tab completion
+
+If you want to add your extensions permissions to the tab completion
+then add this to your extension.json
+```json
+"meta": {
+    "permissions": [
+      "yourextension.permissions",
+      "ye.permissions"
+    ]
+  }
+```
+So your extension.json should now look like this
+```json
+{
+  "entrypoint": "com.example.extensionname.Main",
+  "name": "Extension",
+  "version": "1.0.0",
+  "meta": {
+    "permissions": [
+      "yourextension.permissions",
+      "ye.permissions"
+    ]
+  }
+}
+```
