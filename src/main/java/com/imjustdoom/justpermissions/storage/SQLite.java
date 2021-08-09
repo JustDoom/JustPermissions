@@ -105,6 +105,7 @@ public class SQLite {
         stmt.executeUpdate(sql);
 
         //Creates the default group
-        insertRecord("groups", "'default'");
+        if(!doesContain("'default'", "name", "groups"))
+            insertRecord("groups", "'default'");
     }
 }

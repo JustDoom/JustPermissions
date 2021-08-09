@@ -28,10 +28,11 @@ public class GroupSubcommand extends Command {
         ArgumentWord option = Word("option").from("permission");
         ArgumentWord action = Word("action").from("add", "remove");
         ArgumentWord permission = Word("permission");
+        ArgumentWord group = Word("group");
 
-        addSyntax(this::executePerm, Word("group"), option, action, permission);
-        addSyntax(this::executeClear, Word("group"), option, Literal("clear"));
-        addSyntax(this::executeInfo, Word("group"), Literal("info"));
+        addSyntax(this::executePerm, group, option, action, permission);
+        addSyntax(this::executeClear, group, option, Literal("clear"));
+        addSyntax(this::executeInfo, group, Literal("info"));
     }
 
     private void executePerm(@NotNull CommandSender sender, @NotNull CommandContext context) {
