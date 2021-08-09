@@ -60,6 +60,11 @@ public class PlayerSubcommand extends Command {
 
         Player player = target.findFirstPlayer(sender);
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         if (player == null) {
             sender.sendMessage("The player " + target + " was unable to be found");
             return;
@@ -134,6 +139,11 @@ public class PlayerSubcommand extends Command {
 
         Player player = target.findFirstPlayer(sender);
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         if (player == null) {
             sender.sendMessage("The player " + target + " was unable to be found");
             return;
@@ -165,6 +175,11 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         Player player = target.findFirstPlayer(sender);
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         /**
          * Clears all permissions
          */
@@ -190,41 +205,16 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         Player player = target.findFirstPlayer(sender);
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         List<String> perms = new ArrayList<>();
         for(Permission perm:player.getAllPermissions()){
             perms.add(perm.getPermissionName());
         }
 
         sender.sendMessage(player.getUsername() + " has the permissions " + perms);
-    }
-
-    /**
-     * @param permission - The permission to be added
-     * @param player     - Player to add the permission to
-     * @param sender     - Command Sender
-     */
-    private void addPerm(String permission, Player player, CommandSender sender) {
-        if (player.hasPermission(permission)) {
-            sender.sendMessage(player.getUsername() + " already has the permission " + permission);
-            return;
-        }
-
-        player.addPermission(new Permission(permission));
-        sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
-    }
-
-    /**
-     * @param permission - The permission to be removed
-     * @param player     - Player to remove the permission from
-     * @param sender     - Command sender
-     */
-    private void removePerm(String permission, Player player, CommandSender sender) {
-        if (!player.hasPermission(permission)) {
-            sender.sendMessage(player.getUsername() + " doesn't have the permission " + permission);
-            return;
-        }
-
-        player.removePermission(permission);
-        sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
     }
 }

@@ -35,6 +35,11 @@ public class JustPermissionsCommand extends Command {
     private void executeCreateGroup(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         try {
             JustPermissions.getInstance().getDbCon().insertRecord("groups", "'" + group + "'");
 
@@ -53,6 +58,11 @@ public class JustPermissionsCommand extends Command {
      */
     private void executeRemoveGroup(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
+
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
 
         try {
             JustPermissions.getInstance().getDbCon().runSql("DELETE FROM groups WHERE name = '" + group + "'");

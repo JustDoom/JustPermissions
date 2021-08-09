@@ -53,6 +53,11 @@ public class GroupSubcommand extends Command {
         final String permission = context.get("permission");
         final String group = context.get("group");
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         try {
             if (!JustPermissions.getInstance().getDbCon().doesContain("'" + group + "'", "name", "groups")) {
                 sender.sendMessage("The group " + group + " was unable to be found");
@@ -111,6 +116,11 @@ public class GroupSubcommand extends Command {
     private void executeClear(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
+
         /**
          * Clears all permissions
          */
@@ -143,6 +153,11 @@ public class GroupSubcommand extends Command {
         final String group = context.get("group");
 
         List<String> perms = new ArrayList<>();
+
+        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
+            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+            return;
+        }
 
         /**
          * Get all permissions from the group
