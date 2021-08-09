@@ -14,8 +14,7 @@
   },
   "meta": {
     "permissions": [
-      "justpermissions.test",
-      "jp.test"
+      "justpermissions.perms"
     ]
   }
 }

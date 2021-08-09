@@ -33,7 +33,9 @@ public class GroupSubcommand extends Command {
 
         List<String> permissions = new ArrayList<>();
         for (Extension extension : MinecraftServer.getExtensionManager().getExtensions()){
+            if(extension.getOrigin().getMeta().get("permissions") == null) continue;
             for (int i = 0; i < extension.getOrigin().getMeta().get("permissions").getAsJsonArray().size(); i++) {
+                if(extension.getOrigin().getMeta().get("permissions").getAsJsonArray().get(i) == null) continue;
                 permissions.add(extension.getOrigin().getMeta().get("permissions").getAsJsonArray().get(i).getAsString());
             }
         }
