@@ -5,6 +5,7 @@ import com.imjustdoom.justpermissions.listeners.LoginHandler;
 import com.imjustdoom.justpermissions.storage.DatabaseConnection;
 import com.imjustdoom.justpermissions.util.FileUtil;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.extensions.Extension;

@@ -2,6 +2,7 @@ package com.imjustdoom.justpermissions.commands.subcommands;
 
 import com.imjustdoom.justpermissions.JustPermissions;
 import com.imjustdoom.justpermissions.PermissionHandler;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
@@ -9,6 +10,8 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.command.builder.arguments.minecraft.ArgumentEntity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.extensions.DiscoveredExtension;
+import net.minestom.server.extensions.Extension;
 import net.minestom.server.permission.Permission;
 import net.minestom.server.utils.entity.EntityFinder;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +31,16 @@ public class PlayerSubcommand extends Command {
         ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
         ArgumentWord action = Word("action").from("add", "remove");
         ArgumentWord groupAction = Word("action").from("add", "remove", "set");
-        ArgumentWord permission = Word("permission");
+
+        List<String> permissions = new ArrayList<>();
+        for (Extension extension : MinecraftServer.getExtensionManager().getExtensions()){
+            for (int i = 0; i < extension.getOrigin().getMeta().get("permissions").getAsJsonArray().size(); i++) {
+                permissions.add(extension.getOrigin().getMeta().get("permissions").getAsJsonArray().get(i).getAsString());
+            }
+        }
+
+        String[] permissionArray = permissions.toArray(new String[permissions.size()]);
+        ArgumentWord permission = Word("permission").from(permissionArray);
 
         addSyntax(this::executeInfo, players, Literal("info"));
 

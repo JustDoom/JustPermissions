@@ -1,6 +1,7 @@
 {
   "entrypoint": "com.imjustdoom.justpermissions.JustPermissions",
   "name": "JustPermissions",
+  "version": "1.0.0",
   "externalDependencies": {
     "repositories": [
       {"name": "Central", "url": "https://repo1.maven.org/maven2/"}
@@ -9,6 +10,12 @@
       "org.spongepowered:configurate-yaml:4.1.1",
       "mysql:mysql-connector-java:8.0.26",
       "com.h2database:h2:1.4.199"
+    ]
+  },
+  "meta": {
+    "permissions": [
+      "justpermissions.test",
+      "jp.test"
     ]
   }
 }

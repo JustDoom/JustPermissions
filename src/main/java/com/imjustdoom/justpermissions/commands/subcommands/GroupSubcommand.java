@@ -2,11 +2,13 @@ package com.imjustdoom.justpermissions.commands.subcommands;
 
 import com.imjustdoom.justpermissions.JustPermissions;
 import com.imjustdoom.justpermissions.PermissionHandler;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.entity.Player;
+import net.minestom.server.extensions.Extension;
 import net.minestom.server.permission.Permission;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +29,17 @@ public class GroupSubcommand extends Command {
         //ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
         ArgumentWord option = Word("option").from("permission");
         ArgumentWord action = Word("action").from("add", "remove");
-        ArgumentWord permission = Word("permission");
         ArgumentWord group = Word("group");
+
+        List<String> permissions = new ArrayList<>();
+        for (Extension extension : MinecraftServer.getExtensionManager().getExtensions()){
+            for (int i = 0; i < extension.getOrigin().getMeta().get("permissions").getAsJsonArray().size(); i++) {
+                permissions.add(extension.getOrigin().getMeta().get("permissions").getAsJsonArray().get(i).getAsString());
+            }
+        }
+
+        String[] permissionArray = permissions.toArray(new String[permissions.size()]);
+        ArgumentWord permission = Word("permission").from(permissionArray);
 
         addSyntax(this::executePerm, group, option, action, permission);
         addSyntax(this::executeClear, group, option, Literal("clear"));
