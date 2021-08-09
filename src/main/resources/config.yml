@@ -4,3 +4,6 @@ mysql:
   server: localhost
   port: 3306
   database: permissions
+
+#mysql or h2
+storage: h2

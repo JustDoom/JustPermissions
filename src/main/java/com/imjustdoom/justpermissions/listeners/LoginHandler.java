@@ -31,17 +31,17 @@ public class LoginHandler {
                  * Checks if the player is in the database, if not
                  * adds them to it
                  */
-                if (!JustPermissions.getInstance().getSqLite().doesContain("'" + player.getUuid() + "'", "uuid", "players")) {
-                    JustPermissions.getInstance().getSqLite().insertRecord("players", "'" + player.getUuid()
+                if (!JustPermissions.getInstance().getDbCon().doesContain("'" + player.getUuid() + "'", "uuid", "players")) {
+                    JustPermissions.getInstance().getDbCon().insertRecord("players", "'" + player.getUuid()
                             + "', '" + player.getUsername() + "', 'default'");
 
-                    JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', 'group.default'");
+                    JustPermissions.getInstance().getDbCon().insertRecord("player_permissions", "0, '" + player.getUuid() + "', 'group.default'");
                 }
 
                 /**
                  * Gets all the players permissions and adds them
                  */
-                ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
+                ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
                 while (rs.next()) {
                     String perm = rs.getString("permission");
 
@@ -59,7 +59,7 @@ public class LoginHandler {
                  * Gets all permissions of each group the player inherits from
                  */
                 for (String perm : groupPerms) {
-                    rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + perm.replace("group.", "") + "'");
+                    rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + perm.replace("group.", "") + "'");
                     while (rs.next()) {
                         player.addPermission(new Permission(rs.getString("permission")));
                     }

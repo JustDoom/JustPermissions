@@ -2,7 +2,7 @@ package com.imjustdoom.justpermissions;
 
 import com.imjustdoom.justpermissions.commands.JustPermissionsCommand;
 import com.imjustdoom.justpermissions.listeners.LoginHandler;
-import com.imjustdoom.justpermissions.storage.SQLite;
+import com.imjustdoom.justpermissions.storage.DatabaseConnection;
 import com.imjustdoom.justpermissions.util.FileUtil;
 import lombok.Getter;
 import net.minestom.server.MinecraftServer;
@@ -22,7 +22,7 @@ import java.util.List;
 @Getter
 public class JustPermissions extends Extension {
 
-    private SQLite sqLite;
+    private DatabaseConnection dbCon;
     public static JustPermissions instance;
     private CommentedConfigurationNode root;
     private List<String> groups = new ArrayList<>();
@@ -77,7 +77,7 @@ public class JustPermissions extends Extension {
 
         MinecraftServer.getCommandManager().register(new JustPermissionsCommand());
 
-        sqLite = new SQLite();
+        dbCon = new DatabaseConnection();
 
         new LoginHandler();
 
@@ -85,7 +85,7 @@ public class JustPermissions extends Extension {
          * Adds groups to the group list
          */
         try {
-            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM groups");
+            ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM groups");
             while (rs.next()){
                 groups.add(rs.getString("name"));
             }

@@ -14,7 +14,7 @@ public class PermissionHandler {
      */
     public static void addPermission(Player player, String permission){
         try {
-            JustPermissions.getInstance().getSqLite().insertRecord("player_permissions", "0, '" + player.getUuid() + "', '" + permission + "'");
+            JustPermissions.getInstance().getDbCon().insertRecord("player_permissions", "0, '" + player.getUuid() + "', '" + permission + "'");
             player.addPermission(new Permission(permission));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -28,7 +28,7 @@ public class PermissionHandler {
      */
     public static void addPermission(String group, String permission){
         try {
-            JustPermissions.getInstance().getSqLite().insertRecord("group_permissions", "0, '" + group + "', '" + permission + "'");
+            JustPermissions.getInstance().getDbCon().insertRecord("group_permissions", "0, '" + group + "', '" + permission + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class PermissionHandler {
      */
     public static void removePermission(Player player, String permission){
         try {
-            JustPermissions.getInstance().getSqLite().runSql("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "' AND permission = '" + permission + "'");
+            JustPermissions.getInstance().getDbCon().runSql("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "' AND permission = '" + permission + "'");
             player.removePermission(permission);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -55,7 +55,7 @@ public class PermissionHandler {
      */
     public static void removePermission(String group, String permission){
         try {
-            JustPermissions.getInstance().getSqLite().runSql("DELETE FROM group_permissions WHERE name = '" + group + "' AND permission = '" + permission + "'");
+            JustPermissions.getInstance().getDbCon().runSql("DELETE FROM group_permissions WHERE name = '" + group + "' AND permission = '" + permission + "'");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

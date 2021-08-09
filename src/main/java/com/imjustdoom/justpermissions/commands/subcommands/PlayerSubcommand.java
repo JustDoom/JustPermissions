@@ -54,7 +54,7 @@ public class PlayerSubcommand extends Command {
          * Checks if input group is valid
          */
         try {
-            if(!JustPermissions.getInstance().getSqLite().doesContain("'" + group + "'", "name", "groups")){
+            if(!JustPermissions.getInstance().getDbCon().doesContain("'" + group + "'", "name", "groups")){
                 sender.sendMessage("The group " + group + " doesn't exist");
                 return;
             }
@@ -76,7 +76,7 @@ public class PlayerSubcommand extends Command {
                  * Gets all permissions from group and adds them
                  */
                 try {
-                    ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
+                    ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
                     while (rs.next()) {
                         player.addPermission(new Permission(rs.getString("permission")));
                     }
@@ -99,7 +99,7 @@ public class PlayerSubcommand extends Command {
                  * Gets all permissions from group and removes them
                  */
                 try {
-                    ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
+                    ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
                     while (rs.next()) {
                         player.removePermission(new Permission(rs.getString("permission")));
                     }
@@ -154,7 +154,7 @@ public class PlayerSubcommand extends Command {
          * Clears all permissions
          */
         try {
-            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
+            ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
             while (rs.next()){
                 System.out.println(rs.getString("permission"));
                 player.removePermission(rs.getString("permission"));
@@ -162,7 +162,7 @@ public class PlayerSubcommand extends Command {
 
             rs.close();
 
-            JustPermissions.getInstance().getSqLite().stmt.executeUpdate("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
+            JustPermissions.getInstance().getDbCon().stmt.executeUpdate("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
 
             sender.sendMessage("Cleared all permissions from " + player.getUsername());
         } catch (SQLException throwables) {

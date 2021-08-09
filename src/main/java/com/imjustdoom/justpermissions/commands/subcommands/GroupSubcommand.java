@@ -41,7 +41,7 @@ public class GroupSubcommand extends Command {
         final String group = context.get("group");
 
         try {
-            if (!JustPermissions.getInstance().getSqLite().doesContain("'" + group + "'", "name", "groups")) {
+            if (!JustPermissions.getInstance().getDbCon().doesContain("'" + group + "'", "name", "groups")) {
                 sender.sendMessage("The group " + group + " was unable to be found");
                 return;
             }
@@ -51,7 +51,7 @@ public class GroupSubcommand extends Command {
 
         try {
 
-            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.
+            ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.
                     executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "' AND permission = '" + permission + "'");
 
             switch (action) {
@@ -102,7 +102,7 @@ public class GroupSubcommand extends Command {
          * Clears all permissions
          */
         try {
-            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" +group + "'");
+            ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM group_permissions WHERE name = '" +group + "'");
             while (rs.next()){
                 String permission = rs.getString("permission");
 
@@ -117,7 +117,7 @@ public class GroupSubcommand extends Command {
 
             rs.close();
 
-            JustPermissions.getInstance().getSqLite().stmt.executeUpdate("DELETE FROM group_permissions WHERE name = '" + group + "'");
+            JustPermissions.getInstance().getDbCon().stmt.executeUpdate("DELETE FROM group_permissions WHERE name = '" + group + "'");
 
             sender.sendMessage("Cleared all permissions from " +group);
         } catch (SQLException throwables) {
@@ -135,7 +135,7 @@ public class GroupSubcommand extends Command {
          * Get all permissions from the group
          */
         try {
-            ResultSet rs = JustPermissions.getInstance().getSqLite().stmt.
+            ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.
                     executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
 
             while (rs.next()) {

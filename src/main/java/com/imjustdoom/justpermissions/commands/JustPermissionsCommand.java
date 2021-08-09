@@ -39,7 +39,7 @@ public class JustPermissionsCommand extends Command {
         final String group = context.get("group");
 
         try {
-            JustPermissions.getInstance().getSqLite().insertRecord("groups", "'" + group + "'");
+            JustPermissions.getInstance().getDbCon().insertRecord("groups", "'" + group + "'");
 
             JustPermissions.getInstance().getGroups().add(group);
 
@@ -58,7 +58,7 @@ public class JustPermissionsCommand extends Command {
         final String group = context.get("group");
 
         try {
-            JustPermissions.getInstance().getSqLite().runSql("DELETE FROM groups WHERE name = '" + group + "'");
+            JustPermissions.getInstance().getDbCon().runSql("DELETE FROM groups WHERE name = '" + group + "'");
 
             JustPermissions.getInstance().getGroups().remove(group);
 
