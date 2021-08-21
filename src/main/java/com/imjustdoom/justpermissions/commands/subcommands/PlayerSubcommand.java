@@ -83,7 +83,7 @@ public class PlayerSubcommand extends Command {
         }
 
         switch (action) {
-            case "add" -> {
+            case "add":
                 if (player.hasPermission("group." + group)) {
                     sender.sendMessage(player.getUsername() + " already is in the group " + group);
                     return;
@@ -105,8 +105,7 @@ public class PlayerSubcommand extends Command {
                 }
 
                 sender.sendMessage(player.getUsername() + " now is in the group " + group);
-            }
-            case "remove" -> {
+            case "remove":
                 if (!player.hasPermission("group." + group)) {
                     sender.sendMessage(player.getUsername() + " isn't in the group " + group);
                     return;
@@ -128,7 +127,6 @@ public class PlayerSubcommand extends Command {
                 }
 
                 sender.sendMessage(player.getUsername() + " no longer is in the group " + group);
-            }
         }
     }
 
@@ -150,7 +148,7 @@ public class PlayerSubcommand extends Command {
         }
 
         switch (action) {
-            case "add" -> {
+            case "add":
                 if (player.hasPermission(permission)) {
                     sender.sendMessage(player.getUsername() + " already has the permission " + permission);
                     return;
@@ -158,8 +156,7 @@ public class PlayerSubcommand extends Command {
 
                 PermissionHandler.addPermission(player, permission);
                 sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
-            }
-            case "remove" -> {
+            case "remove":
                 if (!player.hasPermission(permission)) {
                     sender.sendMessage(player.getUsername() + " doesn't have the permission " + permission);
                     return;
@@ -168,7 +165,6 @@ public class PlayerSubcommand extends Command {
                 PermissionHandler.removePermission(player, permission);
                 sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
             }
-        }
     }
 
     private void executeClear(@NotNull CommandSender sender, @NotNull CommandContext context){

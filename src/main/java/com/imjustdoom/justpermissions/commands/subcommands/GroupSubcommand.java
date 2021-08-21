@@ -73,7 +73,7 @@ public class GroupSubcommand extends Command {
                     executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "' AND permission = '" + permission + "'");
 
             switch (action) {
-                case "add" -> {
+                case "add":
                     if (rs.next()) {
                         sender.sendMessage(group + " already has the permission " + permission);
                         return;
@@ -88,8 +88,7 @@ public class GroupSubcommand extends Command {
                     }
 
                     sender.sendMessage("Added the permission " + permission + " to " + group);
-                }
-                case "remove" -> {
+                case "remove":
                     if (!rs.next()) {
                         sender.sendMessage(group + " doesn't have the permission " + permission);
                         return;
@@ -104,7 +103,6 @@ public class GroupSubcommand extends Command {
                     }
 
                     sender.sendMessage("Removed the permission " + permission + " from " + group);
-                }
             }
 
             rs.close();
