@@ -105,6 +105,7 @@ public class PlayerSubcommand extends Command {
                 }
 
                 sender.sendMessage(player.getUsername() + " now is in the group " + group);
+                break;
             case "remove":
                 if (!player.hasPermission("group." + group)) {
                     sender.sendMessage(player.getUsername() + " isn't in the group " + group);
@@ -127,6 +128,7 @@ public class PlayerSubcommand extends Command {
                 }
 
                 sender.sendMessage(player.getUsername() + " no longer is in the group " + group);
+                break;
         }
     }
 
@@ -156,6 +158,7 @@ public class PlayerSubcommand extends Command {
 
                 PermissionHandler.addPermission(player, permission);
                 sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
+                break;
             case "remove":
                 if (!player.hasPermission(permission)) {
                     sender.sendMessage(player.getUsername() + " doesn't have the permission " + permission);
@@ -164,6 +167,7 @@ public class PlayerSubcommand extends Command {
 
                 PermissionHandler.removePermission(player, permission);
                 sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
+                break;
             }
     }
 

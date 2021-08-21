@@ -88,6 +88,7 @@ public class GroupSubcommand extends Command {
                     }
 
                     sender.sendMessage("Added the permission " + permission + " to " + group);
+                    break;
                 case "remove":
                     if (!rs.next()) {
                         sender.sendMessage(group + " doesn't have the permission " + permission);
@@ -103,6 +104,7 @@ public class GroupSubcommand extends Command {
                     }
 
                     sender.sendMessage("Removed the permission " + permission + " from " + group);
+                    break;
             }
 
             rs.close();
