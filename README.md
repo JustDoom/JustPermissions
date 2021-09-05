@@ -16,6 +16,7 @@ Should be stable enough for a server
 - [ ] clean up the code
 - [x] comment code
 - [ ] allow importing of LuckPerm databases
+- [ ] prefixes and suffixes
 
 Please report bugs in the issue tab
 
