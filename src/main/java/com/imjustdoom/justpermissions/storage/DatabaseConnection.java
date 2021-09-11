@@ -1,6 +1,6 @@
 package com.imjustdoom.justpermissions.storage;
 
-import com.imjustdoom.justpermissions.JustPermissions;
+import com.imjustdoom.justpermissions.config.Config;
 
 import java.sql.*;
 
@@ -9,7 +9,7 @@ public class DatabaseConnection {
     public Statement stmt;
 
     public DatabaseConnection(){
-        String storageType = JustPermissions.getInstance().getRoot().node("storage").getString();
+        String storageType = Config.STORAGE;
         if (storageType.equalsIgnoreCase("h2")){
             try {
                 Class.forName("org.h2.Driver");
@@ -25,11 +25,11 @@ public class DatabaseConnection {
             }
         } else if (storageType.equalsIgnoreCase("mysql")){
             //Get db info from config
-            String user = JustPermissions.getInstance().getRoot().node("mysql", "username").getString();
-            String pass = JustPermissions.getInstance().getRoot().node("mysql", "pass").getString();
-            String server = JustPermissions.getInstance().getRoot().node("mysql", "server").getString();
-            String port = JustPermissions.getInstance().getRoot().node("mysql", "port").getString();
-            String database = JustPermissions.getInstance().getRoot().node("mysql", "database").getString();
+            String user = Config.MySQL.USERNAME;
+            String pass = Config.MySQL.PASS;
+            String server = Config.MySQL.SERVER;
+            String port = Config.MySQL.PORT;
+            String database = Config.MySQL.DATABASE;
 
             //Connect and setup database
             try {

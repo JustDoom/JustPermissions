@@ -1,11 +1,13 @@
 package com.imjustdoom.justpermissions.listeners;
 
 import com.imjustdoom.justpermissions.JustPermissions;
+import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerPreLoginEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
+import net.minestom.server.event.player.PlayerLoginEvent;
 import net.minestom.server.permission.Permission;
 
 import java.sql.ResultSet;
@@ -70,6 +72,17 @@ public class LoginHandler {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+        });
+
+        /**
+         * Handle prefixes/suffixes for the player
+         */
+        eventHandler.addListener(PlayerLoginEvent.class, event -> {
+            final Player player = event.getPlayer();
+
+            //player.setDisplayName(Component.text("test " + player.getUsername()));
+            //player.sendMessage(player.getUsername());
+            //player.sendMessage(player.getName());
         });
 
         /**

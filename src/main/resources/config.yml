@@ -1,3 +1,4 @@
+#Reloading will not reload database stuff, a restart is required for that
 mysql:
   username: 'root'
   pass: 'root'
@@ -7,3 +8,17 @@ mysql:
 
 #mysql or h2
 storage: h2
+
+formatting:
+  prefix:
+    format:
+      - "highest"
+    #start-spacer: ""
+    #middle-spacer: " "
+    #end-spacer: ""
+  suffix:
+    format:
+      - "highest"
+    #start-spacer: ""
+    #middle-spacer: " "
+    #end-spacer: ""

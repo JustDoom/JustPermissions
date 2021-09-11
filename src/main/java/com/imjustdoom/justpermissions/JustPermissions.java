@@ -1,6 +1,7 @@
 package com.imjustdoom.justpermissions;
 
 import com.imjustdoom.justpermissions.commands.JustPermissionsCommand;
+import com.imjustdoom.justpermissions.config.Config;
 import com.imjustdoom.justpermissions.listeners.LoginHandler;
 import com.imjustdoom.justpermissions.storage.DatabaseConnection;
 import com.imjustdoom.justpermissions.util.FileUtil;
@@ -25,7 +26,6 @@ public class JustPermissions extends Extension {
 
     private DatabaseConnection dbCon;
     public static JustPermissions instance;
-    private CommentedConfigurationNode root;
     private List<String> groups = new ArrayList<>();
     private HashMap<Player, String> players = new HashMap<>();
 
@@ -40,41 +40,7 @@ public class JustPermissions extends Extension {
     @Override
     public void initialize() {
 
-        /**
-         * Checks if the config file exists
-         * if not creates one
-         */
-        try {
-            if(!FileUtil.doesFileExist("./extensions/JustPermissions"))
-                FileUtil.createDirectory("./extensions/JustPermissions");
-
-            if(!FileUtil.doesFileExist("./extensions/JustPermissions/config.yml")) {
-                getLogger().info("Config not found, creating one now");
-                FileUtil.addConfig("./extensions/JustPermissions/config.yml");
-                getLogger().info("Config created");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        /**
-         * Loads config
-         */
-        final YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
-                .path(Path.of("./extensions/JustPermissions/config.yml")) // Set where we will load and save to
-                .build();
-
-        try {
-            root = loader.load();
-            getLogger().info("Config has been loaded");
-        } catch (IOException e) {
-            System.err.println("An error occurred while loading this configuration: " + e.getMessage());
-            if (e.getCause() != null) {
-                e.getCause().printStackTrace();
-            }
-            System.exit(1);
-            return;
-        }
+        Config.load();
 
         MinecraftServer.getCommandManager().register(new JustPermissionsCommand());
 
