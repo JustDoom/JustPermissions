@@ -2,6 +2,8 @@ package com.imjustdoom.justpermissions.commands.subcommands;
 
 import com.imjustdoom.justpermissions.JustPermissions;
 import com.imjustdoom.justpermissions.PermissionHandler;
+import com.imjustdoom.justpermissions.config.Config;
+import com.imjustdoom.justpermissions.util.MessageUtil;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
@@ -53,14 +55,16 @@ public class GroupSubcommand extends Command {
         final String permission = context.get("permission");
         final String group = context.get("group");
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
         try {
             if (!JustPermissions.getInstance().getDbCon().doesContain("'" + group + "'", "name", "groups")) {
-                sender.sendMessage("The group " + group + " was unable to be found");
+                sender.sendMessage(MessageUtil.translate(Config.Messages.UNABLE_TO_FIND_GROUP.replaceAll("%group%", group)));
                 return;
             }
         } catch (SQLException throwables) {
@@ -75,7 +79,9 @@ public class GroupSubcommand extends Command {
             switch (action) {
                 case "add":
                     if (rs.next()) {
-                        sender.sendMessage(group + " already has the permission " + permission);
+                        sender.sendMessage(MessageUtil.translate(Config.Messages.HAS_PERMISSION
+                                .replaceAll("%target%", group)
+                                .replaceAll("%perm%", permission)));
                         return;
                     }
 
@@ -87,23 +93,24 @@ public class GroupSubcommand extends Command {
                         }
                     }
 
-                    sender.sendMessage("Added the permission " + permission + " to " + group);
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.ADDED_PERMISSION
+                            .replaceAll("%target%", group).replaceAll("%perm%", permission)));
                     break;
                 case "remove":
                     if (!rs.next()) {
-                        sender.sendMessage(group + " doesn't have the permission " + permission);
+                        sender.sendMessage(MessageUtil.translate(Config.Messages.DOESNT_HAVE_PERMISSION
+                                .replaceAll("%target%", group).replaceAll("%perm%", permission)));
                         return;
                     }
 
                     PermissionHandler.removePermission(group, permission);
 
-                    for (Map.Entry<Player, String> pair : JustPermissions.getInstance().getPlayers().entrySet()) {
-                        if (pair.getValue().equalsIgnoreCase(group)) {
+                    for (Map.Entry<Player, String> pair : JustPermissions.getInstance().getPlayers().entrySet())
+                        if (pair.getValue().equalsIgnoreCase(group))
                             pair.getKey().removePermission(permission);
-                        }
-                    }
 
-                    sender.sendMessage("Removed the permission " + permission + " from " + group);
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.REMOVED_PERMISSION
+                            .replaceAll("%target%", group).replaceAll("%perm%", permission)));
                     break;
             }
 
@@ -116,8 +123,10 @@ public class GroupSubcommand extends Command {
     private void executeClear(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
@@ -142,7 +151,7 @@ public class GroupSubcommand extends Command {
 
             JustPermissions.getInstance().getDbCon().stmt.executeUpdate("DELETE FROM group_permissions WHERE name = '" + group + "'");
 
-            sender.sendMessage("Cleared all permissions from " +group);
+            sender.sendMessage(MessageUtil.translate(Config.Messages.CLEARED_PERMISSIONS.replaceAll("%target%", group)));
         } catch (SQLException throwables) {
             sender.sendMessage("Error while trying to remove all permissions from " + group);
             throwables.printStackTrace();
@@ -154,8 +163,10 @@ public class GroupSubcommand extends Command {
 
         List<String> perms = new ArrayList<>();
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
@@ -166,11 +177,11 @@ public class GroupSubcommand extends Command {
             ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.
                     executeQuery("SELECT * FROM group_permissions WHERE name = '" + group + "'");
 
-            while (rs.next()) {
-                perms.add(rs.getString("permission"));
-            }
+            while (rs.next()) perms.add(rs.getString("permission"));
 
-            sender.sendMessage(group + " has the permissions " + perms);
+            sender.sendMessage(MessageUtil.translate(Config.Messages.HAS_PERMISSION
+                    .replaceAll("%target%", group)
+                    .replaceAll("%perms%", String.valueOf(perms))));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

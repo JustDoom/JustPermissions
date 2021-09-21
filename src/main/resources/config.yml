@@ -9,6 +9,24 @@ mysql:
 #mysql or h2
 storage: h2
 
+messages:
+  missing-permission: '&7You need the permission "%perm%" to use this command'
+  group-creation: 'Created the group "%group%"'
+  group-deletion: 'Deleted the group "%group%"'
+  unable-to-find-group: 'The group %group% was unable to be found'
+  unable-to-find-player: 'The player %player% was unable to be found'
+  has-permission: '%target% already has the permission %perm%'
+  added-permission: 'Added the permission %perm% to %target%'
+  doesnt-have-permission: '%group% doesnt have the permission %perm%'
+  removed-permission: 'Removed the permission %perm% from %target%'
+  cleared-permissions: 'Cleared all permissions from %target%'
+  permission-list: '%target% has the permissions %perms%'
+  no-longer-in-group: '%player% no longer is in the group %group%'
+  not-in-group: '%player% isnt in the group %group%'
+  added-to-group: '%player% now is in the group %group%'
+  already-in-group: '%player% already is in the group %group%'
+  group-doesnt-exist: 'The group %group% doesnt exist'
+
 formatting:
   prefix:
     format:

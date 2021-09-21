@@ -3,6 +3,8 @@ package com.imjustdoom.justpermissions.commands;
 import com.imjustdoom.justpermissions.JustPermissions;
 import com.imjustdoom.justpermissions.commands.subcommands.GroupSubcommand;
 import com.imjustdoom.justpermissions.commands.subcommands.PlayerSubcommand;
+import com.imjustdoom.justpermissions.config.Config;
+import com.imjustdoom.justpermissions.util.MessageUtil;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.CommandContext;
@@ -35,8 +37,10 @@ public class JustPermissionsCommand extends Command {
     private void executeCreateGroup(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
@@ -45,7 +49,7 @@ public class JustPermissionsCommand extends Command {
 
             JustPermissions.getInstance().getGroups().add(group);
 
-            sender.sendMessage("Created the group " + group);
+            sender.sendMessage(MessageUtil.translate(Config.Messages.GROUP_CREATION.replaceAll("%group%", group)));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -59,8 +63,10 @@ public class JustPermissionsCommand extends Command {
     private void executeRemoveGroup(@NotNull CommandSender sender, @NotNull CommandContext context){
         final String group = context.get("group");
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
@@ -69,7 +75,7 @@ public class JustPermissionsCommand extends Command {
 
             JustPermissions.getInstance().getGroups().remove(group);
 
-            sender.sendMessage("Removed the group " + group);
+            sender.sendMessage(MessageUtil.translate(Config.Messages.GROUP_DELETION.replaceAll("%group%", group)));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

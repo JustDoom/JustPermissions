@@ -2,6 +2,8 @@ package com.imjustdoom.justpermissions.commands.subcommands;
 
 import com.imjustdoom.justpermissions.JustPermissions;
 import com.imjustdoom.justpermissions.PermissionHandler;
+import com.imjustdoom.justpermissions.config.Config;
+import com.imjustdoom.justpermissions.util.MessageUtil;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.builder.Command;
@@ -57,16 +59,17 @@ public class PlayerSubcommand extends Command {
         final String action = context.get("action");
         final EntityFinder target = context.get("player");
         final String group = context.get("group");
+        final Player player = target.findFirstPlayer(sender);
 
-        Player player = target.findFirstPlayer(sender);
+        final String perm = "justpermissions.perms";
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
         if (player == null) {
-            sender.sendMessage("The player " + target + " was unable to be found");
+            sender.sendMessage(MessageUtil.translate(Config.Messages.UNABLE_TO_FIND_PLAYER.replaceAll("%player%", player.getUsername())));
             return;
         }
 
@@ -75,7 +78,8 @@ public class PlayerSubcommand extends Command {
          */
         try {
             if(!JustPermissions.getInstance().getDbCon().doesContain("'" + group + "'", "name", "groups")){
-                sender.sendMessage("The group " + group + " doesn't exist");
+                sender.sendMessage(MessageUtil.translate(Config.Messages.GROUP_DOESNT_EXIST
+                        .replaceAll("%group%", group)));
                 return;
             }
         } catch (SQLException throwables) {
@@ -85,7 +89,9 @@ public class PlayerSubcommand extends Command {
         switch (action) {
             case "add":
                 if (player.hasPermission("group." + group)) {
-                    sender.sendMessage(player.getUsername() + " already is in the group " + group);
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.ALREADY_IN_GROUP
+                            .replaceAll("%player%", player.getUsername())
+                            .replaceAll("%group%", group)));
                     return;
                 }
 
@@ -104,11 +110,15 @@ public class PlayerSubcommand extends Command {
                     throwables.printStackTrace();
                 }
 
-                sender.sendMessage(player.getUsername() + " now is in the group " + group);
+                sender.sendMessage(MessageUtil.translate(Config.Messages.ADDED_TO_GROUP
+                        .replaceAll("%player%", player.getUsername())
+                        .replaceAll("%group%", group)));
                 break;
             case "remove":
                 if (!player.hasPermission("group." + group)) {
-                    sender.sendMessage(player.getUsername() + " isn't in the group " + group);
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.NOT_IN_GROUP
+                            .replaceAll("%player%", player.getUsername())
+                            .replaceAll("%group%", group)));
                     return;
                 }
 
@@ -127,7 +137,9 @@ public class PlayerSubcommand extends Command {
                     throwables.printStackTrace();
                 }
 
-                sender.sendMessage(player.getUsername() + " no longer is in the group " + group);
+                sender.sendMessage(MessageUtil.translate(Config.Messages.NO_LONGER_IN_GROUP
+                        .replaceAll("%player%", player.getUsername())
+                        .replaceAll("%group%", group)));
                 break;
         }
     }
@@ -137,36 +149,43 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         final String permission = context.get("permission");
 
-        Player player = target.findFirstPlayer(sender);
+        final Player player = target.findFirstPlayer(sender);
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
         if (player == null) {
-            sender.sendMessage("The player " + target + " was unable to be found");
+            sender.sendMessage(MessageUtil.translate(Config.Messages.UNABLE_TO_FIND_PLAYER.replaceAll("%player%", player.getUsername())));
             return;
         }
 
         switch (action) {
             case "add":
                 if (player.hasPermission(permission)) {
-                    sender.sendMessage(player.getUsername() + " already has the permission " + permission);
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.HAS_PERMISSION
+                            .replaceAll("%target%", player.getUsername())
+                            .replaceAll("%perm%", permission)));
                     return;
                 }
 
                 PermissionHandler.addPermission(player, permission);
-                sender.sendMessage("Added the permission " + permission + " to " + player.getUsername());
+                sender.sendMessage(MessageUtil.translate(Config.Messages.ADDED_PERMISSION
+                        .replaceAll("%target%", player.getUsername()).replaceAll("%perm%", permission)));
                 break;
             case "remove":
                 if (!player.hasPermission(permission)) {
-                    sender.sendMessage(player.getUsername() + " doesn't have the permission " + permission);
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.DOESNT_HAVE_PERMISSION
+                            .replaceAll("%target%", player.getUsername()).replaceAll("%perm%", permission)));
                     return;
                 }
 
                 PermissionHandler.removePermission(player, permission);
-                sender.sendMessage("Removed the permission " + permission + " from " + player.getUsername());
+                sender.sendMessage(MessageUtil.translate(Config.Messages.REMOVED_PERMISSION
+                        .replaceAll("%target%", player.getUsername()).replaceAll("%perm%", permission)));
                 break;
             }
     }
@@ -175,8 +194,10 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         Player player = target.findFirstPlayer(sender);
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
@@ -185,16 +206,13 @@ public class PlayerSubcommand extends Command {
          */
         try {
             ResultSet rs = JustPermissions.getInstance().getDbCon().stmt.executeQuery("SELECT * FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
-            while (rs.next()){
-                System.out.println(rs.getString("permission"));
-                player.removePermission(rs.getString("permission"));
-            }
+            while (rs.next()) player.removePermission(rs.getString("permission"));
 
             rs.close();
 
             JustPermissions.getInstance().getDbCon().stmt.executeUpdate("DELETE FROM player_permissions WHERE uuid = '" + player.getUuid() + "'");
 
-            sender.sendMessage("Cleared all permissions from " + player.getUsername());
+            sender.sendMessage(MessageUtil.translate(Config.Messages.CLEARED_PERMISSIONS.replaceAll("%target%", player.getUsername())));
         } catch (SQLException throwables) {
             sender.sendMessage("Error while trying to remove all permissions from " + player.getUsername());
             throwables.printStackTrace();
@@ -205,16 +223,20 @@ public class PlayerSubcommand extends Command {
         final EntityFinder target = context.get("player");
         Player player = target.findFirstPlayer(sender);
 
-        if (sender.isPlayer() && !sender.hasPermission("justpermissions.perms")) {
-            sender.sendMessage("You need the permission \"justpermissions.perms\" to use this command");
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
             return;
         }
 
         List<String> perms = new ArrayList<>();
-        for(Permission perm:player.getAllPermissions()){
-            perms.add(perm.getPermissionName());
+        for(Permission permission:player.getAllPermissions()){
+            perms.add(permission.getPermissionName());
         }
 
-        sender.sendMessage(player.getUsername() + " has the permissions " + perms);
+        sender.sendMessage(MessageUtil.translate(Config.Messages.HAS_PERMISSION
+                .replaceAll("%target%", player.getUsername())
+                .replaceAll("%perms%", String.valueOf(perms))));
     }
 }

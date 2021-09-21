@@ -35,6 +35,24 @@ public class Config {
         }
     }
 
+    public static class Messages {
+        public static String MISSING_PERMISSION;
+        public static String GROUP_CREATION;
+        public static String GROUP_DELETION;
+        public static String UNABLE_TO_FIND_GROUP;
+        public static String UNABLE_TO_FIND_PLAYER;
+        public static String HAS_PERMISSION;
+        public static String ADDED_PERMISSION;
+        public static String DOESNT_HAVE_PERMISSION;
+        public static String REMOVED_PERMISSION;
+        public static String CLEARED_PERMISSIONS;
+        public static String NO_LONGER_IN_GROUP;
+        public static String NOT_IN_GROUP;
+        public static String ADDED_TO_GROUP;
+        public static String ALREADY_IN_GROUP;
+        public static String GROUP_DOESNT_EXIST;
+    }
+
     public static void load() {
 
         /**
@@ -80,6 +98,22 @@ public class Config {
         MySQL.SERVER = configFile.node("mysql", "server").getString();
         MySQL.PORT = configFile.node("mysql", "port").getString();
         MySQL.DATABASE = configFile.node("mysql", "username").getString();
+
+        Messages.MISSING_PERMISSION = configFile.node("messages", "missing-permission").getString();
+        Messages.GROUP_CREATION = configFile.node("messages", "group-creation").getString();
+        Messages.GROUP_DELETION = configFile.node("messages", "group-deletion").getString();
+        Messages.UNABLE_TO_FIND_GROUP = configFile.node("messages", "unable-to-find-group").getString();
+        Messages.UNABLE_TO_FIND_PLAYER = configFile.node("messages", "unable-to-find-player").getString();
+        Messages.HAS_PERMISSION = configFile.node("messages", "has-permission").getString();
+        Messages.ADDED_PERMISSION = configFile.node("messages", "added-permission").getString();
+        Messages.DOESNT_HAVE_PERMISSION = configFile.node("messages", "doesnt-have-permission").getString();
+        Messages.REMOVED_PERMISSION = configFile.node("messages", "removed_permission").getString();
+        Messages.CLEARED_PERMISSIONS = configFile.node("messages", "cleared-permissions").getString();
+        Messages.NO_LONGER_IN_GROUP = configFile.node("messages", "no-longer-in-group").getString();
+        Messages.NOT_IN_GROUP = configFile.node("messages", "not-in-group").getString();
+        Messages.ADDED_TO_GROUP = configFile.node("messages", "added-to-group").getString();
+        Messages.ALREADY_IN_GROUP = configFile.node("messages", "already-in-group").getString();
+        Messages.GROUP_DOESNT_EXIST = configFile.node("messages", "group-doesnt-exist").getString();
 
         try {
             Formatting.Prefix.FORMAT = configFile.node("formatting", "prefix", "format").getList(String.class);
