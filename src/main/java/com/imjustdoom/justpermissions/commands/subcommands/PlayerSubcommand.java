@@ -33,6 +33,7 @@ public class PlayerSubcommand extends Command {
         ArgumentEntity players = ArgumentType.Entity("player").onlyPlayers(true).singleEntity(true);
         ArgumentWord action = Word("action").from("add", "remove");
         ArgumentWord groupAction = Word("action").from("add", "remove", "set");
+        ArgumentWord metaAction = Word("action").from("addprefix", "removeprefix");
 
         List<String> permissions = new ArrayList<>();
 
@@ -53,6 +54,43 @@ public class PlayerSubcommand extends Command {
         addSyntax(this::executeClear, players, Literal("permission"), Literal("clear"));
 
         addSyntax(this::executeGroup, players, Literal("group"), groupAction, Word("group"));
+
+        addSyntax(this::executeMeta, players, Literal("meta"), metaAction, Word("prefix"));
+    }
+
+    private void executeMeta(@NotNull CommandSender sender, @NotNull CommandContext context) {
+        final String action = context.get("action");
+        final EntityFinder target = context.get("player");
+        final String group = context.get("group");
+        final Player player = target.findFirstPlayer(sender);
+        final String prefix = context.get("prefix");
+
+        final String perm = "justpermissions.perms";
+
+        if (sender.isPlayer() && !sender.hasPermission(perm)) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.MISSING_PERMISSION.replaceAll("%perm%", perm)));
+            return;
+        }
+
+        if (player == null) {
+            sender.sendMessage(MessageUtil.translate(Config.Messages.UNABLE_TO_FIND_PLAYER.replaceAll("%player%", player.getUsername())));
+            return;
+        }
+
+        switch (action) {
+            case "addprefix":
+                if (player.hasPermission("prefix." + prefix)) {
+                    sender.sendMessage(MessageUtil.translate(Config.Messages.HAS_PERMISSION
+                            .replaceAll("%target%", player.getUsername())
+                            .replaceAll("%perm%", "prefix." + prefix)));
+                    return;
+                }
+
+                PermissionHandler.addPermission(player, "prefix." + prefix);
+                sender.sendMessage(MessageUtil.translate(Config.Messages.ADDED_PERMISSION
+                        .replaceAll("%target%", player.getUsername()).replaceAll("%perm%", "prefix." + prefix)));
+                break;
+        }
     }
 
     private void executeGroup(@NotNull CommandSender sender, @NotNull CommandContext context) {

@@ -91,7 +91,7 @@ public class DatabaseConnection {
         sql = "CREATE TABLE IF NOT EXISTS player_permissions (" +
                 "`id` INT NOT NULL AUTO_INCREMENT," +
                 "`uuid` VARCHAR(36) NOT NULL," +
-                "`permission` VARCHAR(200) NOT NULL," +
+                "`permission` VARCHAR NOT NULL," +
                 "KEY `player_permissions_uuid` (`uuid`) USING BTREE," +
                 "PRIMARY KEY (`id`)" +
                 ") ENGINE=InnoDB;";
@@ -132,7 +132,7 @@ public class DatabaseConnection {
         sql = "CREATE TABLE IF NOT EXISTS player_permissions (" +
                 "`id` INT NOT NULL AUTO_INCREMENT," +
                 "`uuid` VARCHAR(36) NOT NULL," +
-                "`permission` VARCHAR(200) NOT NULL," +
+                "`permission` VARCHAR NOT NULL," +
                 ") ENGINE=InnoDB;";
 
         stmt.executeUpdate(sql);

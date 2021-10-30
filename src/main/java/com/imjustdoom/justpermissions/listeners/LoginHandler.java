@@ -1,6 +1,7 @@
 package com.imjustdoom.justpermissions.listeners;
 
 import com.imjustdoom.justpermissions.JustPermissions;
+import com.imjustdoom.justpermissions.data.PlayerJP;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
@@ -28,6 +29,9 @@ public class LoginHandler {
 
             List<String> groupPerms = new ArrayList<>();
 
+            JustPermissions.getInstance().getPlayerHandler().addPlayer(player);
+            PlayerJP user = JustPermissions.getInstance().getPlayerHandler().getData(player);
+
             try {
                 /**
                  * Checks if the player is in the database, if not
@@ -53,6 +57,11 @@ public class LoginHandler {
                     }
 
                     player.addPermission(new Permission(perm));
+
+                    if(perm.startsWith("prefix.")) {
+                        System.out.println(perm.substring("prefix.".length()));
+                        user.addPrefix(perm.substring("prefix.".length()));
+                    }
                 }
 
                 rs.close();
@@ -80,9 +89,9 @@ public class LoginHandler {
         eventHandler.addListener(PlayerLoginEvent.class, event -> {
             final Player player = event.getPlayer();
 
-            //player.setDisplayName(Component.text("test " + player.getUsername()));
-            //player.sendMessage(player.getUsername());
-            //player.sendMessage(player.getName());
+            PlayerJP user = JustPermissions.getInstance().getPlayerHandler().getData(player);
+            player.setDisplayName(Component.text(user.getPrefix() + player.getUsername()));
+            player.sendMessage(player.getName());
         });
 
         /**

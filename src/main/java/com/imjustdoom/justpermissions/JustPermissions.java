@@ -2,6 +2,7 @@ package com.imjustdoom.justpermissions;
 
 import com.imjustdoom.justpermissions.commands.JustPermissionsCommand;
 import com.imjustdoom.justpermissions.config.Config;
+import com.imjustdoom.justpermissions.listeners.ChatListener;
 import com.imjustdoom.justpermissions.listeners.LoginHandler;
 import com.imjustdoom.justpermissions.storage.DatabaseConnection;
 import com.imjustdoom.justpermissions.util.FileUtil;
@@ -28,6 +29,7 @@ public class JustPermissions extends Extension {
     public static JustPermissions instance;
     private List<String> groups = new ArrayList<>();
     private HashMap<Player, String> players = new HashMap<>();
+    private PlayerHandler playerHandler;
 
     public JustPermissions(){
         instance = this;
@@ -42,11 +44,14 @@ public class JustPermissions extends Extension {
 
         Config.load();
 
+        playerHandler = new PlayerHandler();
+
         MinecraftServer.getCommandManager().register(new JustPermissionsCommand());
 
         dbCon = new DatabaseConnection();
 
         new LoginHandler();
+        new ChatListener();
 
         /**
          * Adds groups to the group list
