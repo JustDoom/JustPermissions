@@ -1,3 +1,5 @@
+![Build Status](https://ci.imjustdoom.com/job/JustPermissions/badge/icon)
+
 # JustPermissions
 A permissions plugin for Minestom
 
