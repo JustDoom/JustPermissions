@@ -1,6 +1,7 @@
+# JustPermissions
+
 ![Build Status](https://ci.imjustdoom.com/job/JustPermissions/badge/icon)
 
-# JustPermissions
 A permissions plugin for Minestom
 
 To run the commands give yourself the permission "justpermissions.perms"
